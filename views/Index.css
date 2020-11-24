@@ -32,12 +32,13 @@
 .button{
   background-color: rgb(255, 255, 255); 
   padding: 15px;
+  top:  50px;
   border-style: hidden;
   text-align: center;
   display: inline-block;
   font-size: 16px;
   height: 60px;
-  border-radius: 5px;
+  border-radius: 10px;
 
 }
 
