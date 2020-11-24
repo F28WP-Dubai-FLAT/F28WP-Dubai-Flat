@@ -5,23 +5,40 @@
     <title>"Game Title"</title>
     <link rel="stylesheet" type="text/css" href="./Index.css" media="all" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/socket.io/socket.io.js"></script>
     <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script defer src = "./Main.js" type="module" > </script>
+    
 </head>
 
-<body onload="init();">
-  
+<body >
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+          <form id = "nameEnter">
+            <label id="fname1" for="fname">Enter your game name</label><br>
+            <input type="text" id="fname" name="fname"><br>
+            <input id="submit" type="submit" value="Submit">
+          </form>
+        </div>
+    </div>
+
     <div id="Title">
         <h1 id="GameName">"Game Name"</h1>
         <button class="button">Play</button>
         <button class="button">About</button>
     </div>
 
+
     <div id = "container">
         <div id = "gameWindow">
             <div id = "map">
             </div>
         </div>
+    </div>
+
+    <div id="LBbox">
     </div>
 
 

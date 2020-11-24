@@ -1,17 +1,13 @@
 console.log("Program has started")
 
+
 // Global values
 let spawnStop;
 let gameOver = false;
 let score = 0;
+var player;
 
-// Initial Function
-function init() {
-    //put all starting code here
-    pseudoname = prompt("Please input your username");
-    player.spawn();
-    projSpawn.start();
-}
+const socket = io()
 
 // Class that spawns the projectiles
 function projSpawner() {
@@ -23,10 +19,9 @@ projSpawner.prototype.start = function() {
     let timer = this.timer
     spawnStop = false;
     setTimeout(spawners, timer);
-
     
     function spawners(){
-        let check = (randomize(-100, 1100));
+        let check = (randomize(-10, 1010));
         if(score < 200)
             projectile(check,7);
         else if((score >= 200) && (score < 800)) {
@@ -83,7 +78,8 @@ function projectile(xPos, velo){
         $("#map").prepend(projectile)
     
     //updates projectile's position every 10ms
-    let interval = setInterval(function(){
+    let intervals = setInterval(function(){
+        
         //current keeps track of player position
         current += velo;
         projectile = projectile.css({"top":current})
@@ -93,12 +89,12 @@ function projectile(xPos, velo){
         
         if(current > 550) {
             score += 10
-            clearInterval(interval);
+            clearInterval(intervals);
             projectile.remove();
         }
 
         if(spawnStop) {
-            clearInterval(interval);
+            clearInterval(intervals);
             projectile.remove()
         }
     },10);
@@ -111,16 +107,7 @@ function randomize(min, max) {
     return (Math.floor(Math.random() * (max - min) ) + min);
 }
 
-import { Socket } from "socket.io";
-////////////////////////////////////
-import Player from "./Classes/Player.js"
 
-var player = new Player();
-
-//Creates an object from projSpawner
-let projSpawn = new projSpawner();
-/*This is to be called when starting projectile spawning 
-    ****Call this in the init function**** */
 
 function keyDownHandler(e) {
     if ((e.keyCode == 39) || (e.keyCode == 68)) {
@@ -131,14 +118,16 @@ function keyDownHandler(e) {
     }
 }
 
-document.addEventListener("keydown", keyDownHandler, false);
-
 function isHit(defender, offender) {
     if (cross(defender, offender)) {
         console.log("Player got hit");
+        
         spawnStop = true;
         gameOver = true;
         console.log("Your score is: " + score)
+        player.kill()
+        document.removeEventListener("keydown", keyDownHandler, false);
+        //socket.emit('gameOver', score)
     }
 }
 
@@ -164,3 +153,67 @@ function cross(element1, element2) {
     return true;
     
 }
+
+////////////////////////////////////
+import Player from "./Classes/Player.js"
+
+var modal;
+
+var player = new Player()
+let projSpawn = new projSpawner();
+
+socket.on('connect', () => {
+    gameLoop()
+    setInterval(() => {
+        if(gameOver) {
+            socket.emit('gameOver', score);
+            gameOver = false
+            gameLoop()
+        }
+    }, 20);
+
+    setInterval(() => {
+        socket.emit('askScore',score)
+        socket.on('getScore',function(scores){
+        })
+    }, 4000);
+})
+
+$("#LBbox").append("Huther")
+linebreak = document.createElement("br");
+$("#LBbox").append(" \n Huthers")
+
+function gameLoop() {
+    $("#nameEnter")[0].reset();
+    modal= $("#myModal")
+    
+    modal.show();
+    score = 0;
+    let exit = true
+    let userID;
+
+    $("#nameEnter").submit((event) => {
+        if(exit) {
+            let playerName = $("#fname").val()
+            event.preventDefault();
+
+            socket.emit('gameStart', playerName)
+            modal.hide();
+            
+            projSpawn.start()
+            
+            player.spawn();
+            document.addEventListener("keydown", keyDownHandler, false);
+            exit = false
+        }
+    })
+
+}
+
+//let gameEnd = setInterval(() => {
+    /*if(gameOver) {
+        $("#nameEnter")[0].reset();
+        modal.show();
+    }*/
+//}, 10)
+/////////////////////////////////////
