@@ -1,17 +1,14 @@
 console.log("Program has started")
 
+import io from 'socket.io-client';
+
 // Global values
 let spawnStop;
 let gameOver = false;
 let score = 0;
+var player;
 
-// Initial Function
-function init() {
-    //put all starting code here
-    pseudoname = prompt("Please input your username");
-    player.spawn();
-    projSpawn.start();
-}
+const socket = io()
 
 // Class that spawns the projectiles
 function projSpawner() {
@@ -26,7 +23,7 @@ projSpawner.prototype.start = function() {
 
     
     function spawners(){
-        let check = (randomize(-100, 1100));
+        let check = (randomize(-10, 1010));
         if(score < 200)
             projectile(check,7);
         else if((score >= 200) && (score < 800)) {
@@ -111,16 +108,7 @@ function randomize(min, max) {
     return (Math.floor(Math.random() * (max - min) ) + min);
 }
 
-import { Socket } from "socket.io";
-////////////////////////////////////
-import Player from "./Classes/Player.js"
 
-var player = new Player();
-
-//Creates an object from projSpawner
-let projSpawn = new projSpawner();
-/*This is to be called when starting projectile spawning 
-    ****Call this in the init function**** */
 
 function keyDownHandler(e) {
     if ((e.keyCode == 39) || (e.keyCode == 68)) {
@@ -131,14 +119,14 @@ function keyDownHandler(e) {
     }
 }
 
-document.addEventListener("keydown", keyDownHandler, false);
-
 function isHit(defender, offender) {
     if (cross(defender, offender)) {
         console.log("Player got hit");
+        
         spawnStop = true;
         gameOver = true;
         console.log("Your score is: " + score)
+        //socket.emit('gameOver', score)
     }
 }
 
@@ -164,3 +152,38 @@ function cross(element1, element2) {
     return true;
     
 }
+
+////////////////////////////////////
+import Player from "./Classes/Player.js"
+
+socket.on('connect', () => {
+    var modal = $("#myModal");
+    modal.show();
+
+    $("#nameEnter").submit((event) => {
+        let playerName = $("#fname").val()
+        event.preventDefault();
+        socket.emit('gameStart', playerName)
+
+        console.log(playerName)
+        modal.hide();
+
+        player = new Player();
+        player.spawn();
+        document.addEventListener("keydown", keyDownHandler, false);
+
+        //Creates an object from projSpawner
+        let projSpawn = new projSpawner();
+        /*This is to be called when starting projectile spawning 
+            ****Call this in the init function**** */
+        projSpawn.start();
+    })
+})
+
+//let gameEnd = setInterval(() => {
+    /*if(gameOver) {
+        $("#nameEnter")[0].reset();
+        modal.show();
+    }*/
+//}, 10)
+/////////////////////////////////////
