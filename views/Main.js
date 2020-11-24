@@ -1,6 +1,5 @@
 console.log("Program has started")
 
-import io from 'socket.io-client';
 
 // Global values
 let spawnStop;
@@ -20,7 +19,6 @@ projSpawner.prototype.start = function() {
     let timer = this.timer
     spawnStop = false;
     setTimeout(spawners, timer);
-
     
     function spawners(){
         let check = (randomize(-10, 1010));
@@ -80,7 +78,8 @@ function projectile(xPos, velo){
         $("#map").prepend(projectile)
     
     //updates projectile's position every 10ms
-    let interval = setInterval(function(){
+    let intervals = setInterval(function(){
+        
         //current keeps track of player position
         current += velo;
         projectile = projectile.css({"top":current})
@@ -90,12 +89,12 @@ function projectile(xPos, velo){
         
         if(current > 550) {
             score += 10
-            clearInterval(interval);
+            clearInterval(intervals);
             projectile.remove();
         }
 
         if(spawnStop) {
-            clearInterval(interval);
+            clearInterval(intervals);
             projectile.remove()
         }
     },10);
@@ -126,6 +125,8 @@ function isHit(defender, offender) {
         spawnStop = true;
         gameOver = true;
         console.log("Your score is: " + score)
+        player.kill()
+        document.removeEventListener("keydown", keyDownHandler, false);
         //socket.emit('gameOver', score)
     }
 }
@@ -156,29 +157,58 @@ function cross(element1, element2) {
 ////////////////////////////////////
 import Player from "./Classes/Player.js"
 
+var modal;
+
+var player = new Player()
+let projSpawn = new projSpawner();
+
 socket.on('connect', () => {
-    var modal = $("#myModal");
+    gameLoop()
+    setInterval(() => {
+        if(gameOver) {
+            socket.emit('gameOver', score);
+            gameOver = false
+            gameLoop()
+        }
+    }, 20);
+
+    setInterval(() => {
+        socket.emit('askScore',score)
+        socket.on('getScore',function(scores){
+        })
+    }, 4000);
+})
+
+$("#LBbox").append("Huther")
+linebreak = document.createElement("br");
+$("#LBbox").append(" \n Huthers")
+
+function gameLoop() {
+    $("#nameEnter")[0].reset();
+    modal= $("#myModal")
+    
     modal.show();
+    score = 0;
+    let exit = true
+    let userID;
 
     $("#nameEnter").submit((event) => {
-        let playerName = $("#fname").val()
-        event.preventDefault();
-        socket.emit('gameStart', playerName)
+        if(exit) {
+            let playerName = $("#fname").val()
+            event.preventDefault();
 
-        console.log(playerName)
-        modal.hide();
-
-        player = new Player();
-        player.spawn();
-        document.addEventListener("keydown", keyDownHandler, false);
-
-        //Creates an object from projSpawner
-        let projSpawn = new projSpawner();
-        /*This is to be called when starting projectile spawning 
-            ****Call this in the init function**** */
-        projSpawn.start();
+            socket.emit('gameStart', playerName)
+            modal.hide();
+            
+            projSpawn.start()
+            
+            player.spawn();
+            document.addEventListener("keydown", keyDownHandler, false);
+            exit = false
+        }
     })
-})
+
+}
 
 //let gameEnd = setInterval(() => {
     /*if(gameOver) {

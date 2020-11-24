@@ -36,7 +36,6 @@ export default class Player {
     //updates player position. Called in move
     display() {
         this.fitBounds();
-
         this.htmlElement.style.left = this.x + "px";
         this.htmlElement.style.top = (document.getElementById("gameWindow").offsetHeight - this.htmlElement.offsetHeight) + "px";
         this.htmlElement.style.display = "block";
@@ -50,5 +49,9 @@ export default class Player {
             this.x = 0;
         if (this.x > w - iw)
             this.x = w - iw;
+    }
+
+    kill() {
+        this.htmlElement.remove()
     }
 }

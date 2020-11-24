@@ -17,6 +17,7 @@
   height: 550px;
   margin: 20px;
   overflow: hidden;
+  display: flex;
   
 }
 
@@ -112,3 +113,23 @@ input[type=text] {
   width: 35%;
   height: 35%;
 } 
+
+#LBtable {
+  display: flex;
+  top: 160px;
+  left: 1330px;
+  position: absolute;
+  border-spacing: 15px 50px;
+  width: 40px;
+}
+
+#LBbox {
+  padding: 10px 20px;
+  position: absolute;
+  top: 130px;
+  left: 1290px;
+  background-color: rgb(255, 254, 169);
+  height: 500px;
+  width: 180px;
+}
+

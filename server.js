@@ -61,15 +61,14 @@ pool.connect(function(err) {
     });
 });
 
-const getInfo = function() {
-    
+const getInfo = function(callback) {
     pool2.connect(function(err) {
         //select all sessions
+        callback = callback || function(){};
         selectInfo = "Select * from `leaderboard` where score is not null;";
         pool2.query(selectInfo, function(err, result) {
             if (err) throw err;
-            console.log(result);
-            return result;
+            return callback(result);
         });
     });
 };
@@ -132,8 +131,19 @@ const insertScore = function(id, score) {
 // for debugging
 const deleteID = function(id) {
     pool2.connect(function(err) {
-        addUser = (`Delete from leaderboard where ID = ${id}`);
-        pool2.query(addUser, function(err, result) {
+        deleter = (`Delete from leaderboard where ID = ${id}`);
+        pool2.query(deleter, function(err, result) {
+            if (err) throw err;
+            console.log("Succesfully done");
+            return result;
+        });
+    })
+}
+
+const deleteAll = function() {
+    pool2.connect(function(err) {
+        deleteC = (`Delete from leaderboard;`);
+        pool2.query(deleteC, function(err, result) {
             if (err) throw err;
             console.log("Succesfully done");
             return result;
@@ -144,8 +154,23 @@ const deleteID = function(id) {
 
 io.on('connection', function(socket) {
     console.log("It starts")
+
     socket.on('gameStart', function(username){
         createUser(username);
-        console.log("IT WORKS!!!")
+        console.log("Added user:"+username)
+    })
+
+    socket.on('gameOver', function(score){
+        findLastID(function(results){ 
+            let id = results
+            insertScore(id-1, score)
+            console.log("Added score")
+        }) 
+    })
+
+    socket.on('askScore', function(){
+        getInfo(function(result){
+            socket.emit('getScore', result);
+        })
     })
 })
