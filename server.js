@@ -151,7 +151,6 @@ const deleteAll = function() {
     })
 }
 
-
 io.on('connection', function(socket) {
     console.log("It starts")
 

@@ -1,14 +1,34 @@
-#Title {
-  background-color: rgb(189, 218, 255);
-  border-color: rgb(255, 255, 255);
-  border-style: solid;
-  height: 100%;
+#top {
+  background-color: rgb(19, 19, 19);
+  border-style: hidden;
+  height: 80px;
   width:100%;
   display: flex; 
   justify-content: space-around;
-  border-radius: 10px;
-  
+  border-radius: 5px;
 }
+
+#gameTitle {
+  color: white;
+  position: absolute;
+  font-size: 30px;
+  top:7px;
+  left:620px;
+  font-family: "Lucida Console", Courier, monospace;
+}
+
+#play {
+  position: absolute;
+  top:25px;
+  left:400px;
+}
+
+#about {
+  position: absolute;
+  top:25px;
+  left:1050px;
+}
+
 
 #gameWindow {
   width: 1100px;
@@ -21,41 +41,28 @@
   
 }
 
-#foot
-{
-  border-style: hidden;
-  background-color: rgb(255, 210, 248);
-  height: 50px;
-  border-radius: 10px;
-}
 
 .button{
   background-color: rgb(255, 255, 255); 
   padding: 15px;
-  top:  50px;
   border-style: hidden;
   text-align: center;
   display: inline-block;
   font-size: 16px;
-  height: 80px;
-  width: 80px;
-  border-radius: 10px;
-
+  height: 50px;
+  border-radius: 5px;
+  font-family: "Lucida Console", Courier, monospace;
 }
 
-#container {
-  background-color: rgb(255, 255, 255);
-}
 
 body {
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(39, 39, 39);
 }
 
 #map {
-  background-color: #ffebeb;
+  background-image: url("../Images/bg1.gif");
   height: 600px;
   width: 1050px; 
-  
 }
 
 
@@ -63,7 +70,7 @@ body {
   position: absolute;
   left: 100px;
   /*top: 240px;*/
-  width: 40px;
+  width: 94px;
   height: 120px
 }
 
@@ -87,7 +94,16 @@ input[type=text] {
 }
 
 #fname1 {
-  margin-left: 22%;
+  margin-left: 17%;
+}
+
+#submit {
+  background-color: #6d6ac4;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
 }
 
 /* The Modal (background) */
@@ -114,24 +130,95 @@ input[type=text] {
   border: 1px solid #888;
   width: 35%;
   height: 35%;
+  font-family: "Lucida Console", Courier, monospace;
 } 
 
-#LBtable {
-  display: flex;
-  top: 160px;
-  left: 1330px;
-  position: absolute;
-  border-spacing: 15px 50px;
-  width: 40px;
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
 }
 
-#LBbox {
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#LBbox1 {
+  color: white;
   padding: 10px 20px;
   position: absolute;
-  top: 130px;
+  top: 200px;
   left: 1290px;
-  background-color: rgb(255, 254, 169);
-  height: 500px;
-  width: 180px;
+  background-color: rgb(19, 19, 19);
+  height: 260px;
+  width: 170px;
+  word-wrap: break-word; 
+  font-size: 15px;
+  font-family: "Lucida Console", Courier, monospace;
 }
 
+#LBbox2 {
+  color: white;
+  padding: 10px 20px;
+  position: absolute;
+  top: 200px;
+  left: 1400px;
+  height: 260px;
+  width: 90px;
+  word-wrap: break-word; 
+  font-size: 15px;
+  font-family: "Lucida Console", Courier, monospace;
+}
+
+#score {
+  text-align: center;
+  position: absolute;
+  top:340px;
+  left:10px;
+  background-color: rgb(19, 19, 19);
+  width: 170px;
+  height: 100px;
+  z-index: 10;
+  font-size: 30px;
+  color: rgb(255, 255, 255);
+  font-family: "Lucida Console", Courier, monospace;
+}
+
+#mainPlay {
+  background-color: #662a81;
+  border-radius: 5px;
+  border: none;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  text-decoration: none;
+  height:50px;
+  width:80px;
+  font-size: 16px;
+  position: absolute;
+  top: 250px;
+  left: 490px;
+  font-family: "Lucida Console", Courier, monospace;
+}
+
+#song{
+  font-size: 20px;
+  color: rgb(255, 255, 255);
+  position: absolute;
+  top: 495px;
+  left:10px;
+  font-family: "Lucida Console", Courier, monospace;
+}
+
+#deathMessage{
+  font-size: 40px;
+  color: white;
+  position: absolute;
+  top: 120px;
+  left: 430px;
+  font-family: "Lucida Console", Courier, monospace;
+}

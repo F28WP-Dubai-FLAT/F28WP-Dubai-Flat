@@ -9,7 +9,7 @@ export default class Player {
         // creates html element for the player
         this.handle = $('<img />', { 
             id: 'player',
-            src: './Images/Flat02.png',
+            src: './Images/botfly.gif',
             alt: 'Player'
           });        
     }
@@ -24,20 +24,24 @@ export default class Player {
         this.htmlElement = document.getElementById("player");
         this.x = this.htmlElement.offsetLeft;;
         //initial top position changed
-        this.htmlElement.style.top = (document.getElementById("gameWindow").offsetHeight - this.htmlElement.offsetHeight) + "px";
+        this.htmlElement.style.top = (document.getElementById("gameWindow").offsetHeight - this.htmlElement.offsetHeight - 30) + "px";
     }
 
     //moves the player. Call in update
     move(xDir) {
         this.x += this.speed * xDir;
-        this.display();
+        this.display(xDir);
     } 
 
     //updates player position. Called in move
-    display() {
+    display(xDir) {
         this.fitBounds();
+        if(xDir < 0)
+            this.htmlElement.src = "../Images/botflyLeft.gif";
+        else
+            this.htmlElement.src = "../Images/botfly.gif";
         this.htmlElement.style.left = this.x + "px";
-        this.htmlElement.style.top = (document.getElementById("gameWindow").offsetHeight - this.htmlElement.offsetHeight) + "px";
+        this.htmlElement.style.top = (document.getElementById("gameWindow").offsetHeight - this.htmlElement.offsetHeight-30) + "px";
         this.htmlElement.style.display = "block";
     }
 
