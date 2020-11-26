@@ -4,13 +4,12 @@ console.log("Program has started")
 // Global values
 let spawnStop;
 let gameOver = false;
-let gameRun = false
 let restart = false;
 let score = 0;
 var player;
 
                 
-
+//socket
 const socket = io()
 
 // Class that spawns the projectiles
@@ -49,14 +48,6 @@ projSpawner.prototype.start = function() {
     }
 }
 
-/*
-function spawners(){
-    clearInterval
-    let check = (randomize(-100, 1100));
-    if(score < 200) 
-        projectile(check, 7);
-    
-}*/
 //projectile is a child function/class of projSpawner
 function projectile(xPos, velo){
     //Projectile speed and position accumulator
@@ -114,7 +105,7 @@ function randomize(min, max) {
 }
 
 
-
+// Moves player in correct direction
 function keyDownHandler(e) {
     if ((e.keyCode == 39) || (e.keyCode == 68)) {
         player.move(1);
@@ -123,6 +114,7 @@ function keyDownHandler(e) {
         player.move(-1);
     }
 }
+
 
 function isHit(defender, offender) {
     if (cross(defender, offender)) {
@@ -183,6 +175,16 @@ var songs = [
         "artist" : "F-777"
     },
     {
+        "location" : "../Audio/Narc.mp3",
+        "name" : "NARC",
+        "artist" : "Mega Drive"
+    },
+    {
+        "location" : "../Audio/Future_Club.mp3",
+        "name" : "Future Club",
+        "artist" : "Pertubator"
+    },
+    {
         "location" : "../Audio/Diabolic.mp3",
         "name" : "Diabolic",
         "artist" : "Dance With The Dead"
@@ -211,7 +213,6 @@ socket.on('connect', () => {
     setInterval(() => {
         if(gameOver) {
             socket.emit('gameOver', score);
-            gameRun = false
             let deathSound = new Audio("../Audio/soundDeath.wav")
             deathSound.play()
             document.getElementById('map').style.backgroundImage="url(../Images/bg1.gif)"
@@ -237,7 +238,7 @@ socket.on('connect', () => {
         socket.on('getScore',function(scores){
             leaderboard(scores)
         })
-    }, 4000);
+    }, 1000);
 })
 
 $("#LBbox").empty()
@@ -285,7 +286,6 @@ function gameLoop() {
             if(!restart) {
                 document.getElementById('map').style.backgroundImage="url(../Images/bg2.gif)"
                 $("#deathMessage").empty()
-                gameRun = true
                 let val = randomize(-1,songs.length)
                 currentSong = new Audio((songs[val])["location"])
                 currentSongInfo = songs[val]
@@ -334,32 +334,17 @@ function leaderboard(scoreList) {
     $("#LBbox1").empty()
     $("#LBbox2").empty()
     $("#LBbox1").append(`Leaderboard`)
-    var linebreak1 = document.createElement("br");
-    var linebreak2 = document.createElement("br");
-    $("#LBbox1").append(linebreak1)
-    $("#LBbox2").append(linebreak2)
-    linebreak1 = document.createElement("br");
-    linebreak2 = document.createElement("br");
-    $("#LBbox1").append(linebreak1)
-    $("#LBbox2").append(linebreak2)
+
+    insertBreak()
+    insertBreak()
     $("#LBbox1").append(`Name`)
     $("#LBbox2").append(`Score`)
-    linebreak1 = document.createElement("br");
-    linebreak2 = document.createElement("br");
-    $("#LBbox1").append(linebreak1)
-    $("#LBbox2").append(linebreak2)
+    insertBreak()
 
     for(let i = 0; i < cutoff; ++i) {
         let spaceRequired = 15
-        var linebreak1 = document.createElement("br");
-        var linebreak2 = document.createElement("br");
-        $("#LBbox1").append(linebreak1)
-        $("#LBbox2").append(linebreak2)
-        linebreak1 = document.createElement("br");
-        linebreak2 = document.createElement("br");
-        $("#LBbox1").append(linebreak1)
-        $("#LBbox2").append(linebreak2)
-        
+        insertBreak()
+        insertBreak()
         $("#LBbox1").append((scoreList[i])["Name"]) 
         $("#LBbox2").append((scoreList[i])["Score"])
     }
@@ -384,6 +369,13 @@ function checkName(name) {
         flag = false
 
     return flag
+}
+
+function insertBreak() {
+    var linebreak1 = document.createElement("br");
+    var linebreak2 = document.createElement("br");
+    $("#LBbox1").append(linebreak1)
+    $("#LBbox2").append(linebreak2)
 }
 
 /////////////////////////////////////
