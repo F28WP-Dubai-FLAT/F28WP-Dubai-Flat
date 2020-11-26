@@ -15,7 +15,7 @@ const socket = io()
 
 // Class that spawns the projectiles
 function projSpawner() {
-    this.timer = 400;
+    this.timer = 500;
 }
 
 // function to start the projectile spawning. ****Recommened that this function is called in init****
@@ -27,22 +27,22 @@ projSpawner.prototype.start = function() {
     function spawners(){
         let check = (randomize(-10, 1010));
         if(score < 200)
-            projectile(check,7);
+            projectile(check,5);
         else if((score >= 200) && (score < 800)) {
+            timer = 450;
+            projectile(check, 6)
+        }
+        else if((score >= 800) && (score < 1600)) {
+            timer = 400;
+            projectile(check, 7)
+        }
+        else if((score >= 1600) && (score < 2400)){
             timer = 350;
             projectile(check, 8)
         }
-        else if((score >= 800) && (score < 1600)) {
-            timer = 300;
-            projectile(check, 9)
-        }
-        else if((score >= 1600) && (score < 2400)){
-            timer = 250;
-            projectile(check, 10)
-        }
         else if(score > 2400) {
-            timer = 200;
-            projectile(check, 12)
+            timer = 300;
+            projectile(check, 11)
         }
         if(!spawnStop) 
             setTimeout(spawners, timer)
@@ -178,6 +178,11 @@ var songs = [
         "artist" : "Waveshaper"
     },
     {
+        "location" : "../Audio/Sonic_Blaster.mp3",
+        "name" : "Sonic Blaster",
+        "artist" : "F-777"
+    },
+    {
         "location" : "../Audio/Diabolic.mp3",
         "name" : "Diabolic",
         "artist" : "Dance With The Dead"
@@ -186,11 +191,6 @@ var songs = [
         "location" : "../Audio/Get_Out.mp3",
         "name" : "Get Out",
         "artist" : "Dance With The Dead"
-    },
-    {
-        "location" : "../Audio/Mount_Kwaku.mp3",
-        "name" : "Mount Kwaku",
-        "artist" : "Lorn"
     },
     {
         "location" : "../Audio/Roller_Mobster.mp3",
