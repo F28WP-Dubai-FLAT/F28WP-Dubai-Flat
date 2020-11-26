@@ -5,7 +5,7 @@ const express = require('express');
 const app = express();
 const mysql = require('mysql');
 
-
+//pools to set the connections
 var pool = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -19,7 +19,7 @@ var pool2 = mysql.createConnection({
     password: "faiz1234#Zim",
     database: "game",
     debug: true
-  });
+});
 
 var http = require('http').createServer(app);
 
@@ -39,6 +39,7 @@ http.listen((process.env.PORT || 3000), () => {
 //loading socket.io and binding to the server
 const io = require('socket.io')(http);
 
+// On pool connection
 pool.connect(function(err) {
     if (err) throw err;
     console.log("Connected!");
@@ -61,6 +62,7 @@ pool.connect(function(err) {
     });
 });
 
+// Recieves player data whose score is not null
 const getInfo = function(callback) {
     pool2.connect(function(err) {
         //select all sessions
@@ -73,8 +75,8 @@ const getInfo = function(callback) {
     });
 };
 
+// Recieves all player data
 const getInfoDebug = function() {
-    
     pool2.connect(function(err) {
         //select all sessions
         selectInfo = "Select * from `leaderboard`";
@@ -86,6 +88,7 @@ const getInfoDebug = function() {
     });
 };
 
+//Find the last existing ID to set up new user ID
 const findLastID = function(callback) {
     pool2.connect(function(err){
         callback = callback || function(){};
@@ -103,6 +106,7 @@ const findLastID = function(callback) {
     })
 }
 
+// Create new player in the table
 const createUser = function(name) {
     pool2.connect(function(err) {
         findLastID(function(results) {
@@ -116,6 +120,7 @@ const createUser = function(name) {
     })
 }
 
+// To change the score of player in the table based on ID
 const insertScore = function(id, score) {
     pool2.connect(function(err) {
         const insertval = `Update leaderboard set score= ${score} where id = ${id};`;
@@ -140,6 +145,7 @@ const deleteID = function(id) {
     })
 }
 
+// For debugging
 const deleteAll = function() {
     pool2.connect(function(err) {
         deleteC = (`Delete from leaderboard;`);
@@ -152,6 +158,7 @@ const deleteAll = function() {
 }
 
 
+// Main connection function
 io.on('connection', function(socket) {
     console.log("It starts")
 

@@ -1,3 +1,4 @@
+/* The top division */
 #top {
   background-color: rgb(19, 19, 19);
   border-style: hidden;
@@ -8,6 +9,7 @@
   border-radius: 5px;
 }
 
+/* The game title */
 #gameTitle {
   color: white;
   position: absolute;
@@ -17,19 +19,21 @@
   font-family: "Lucida Console", Courier, monospace;
 }
 
+/* The play buttom */
 #play {
   position: absolute;
   top:25px;
   left:400px;
 }
 
+/* The about button*/
 #about {
   position: absolute;
   top:25px;
   left:1050px;
 }
 
-
+/* Resize the game window */
 #gameWindow {
   width: 1100px;
   position: relative;
@@ -41,7 +45,7 @@
   
 }
 
-
+/* General classes for buttons  */
 .button{
   background-color: rgb(255, 255, 255); 
   padding: 15px;
@@ -54,27 +58,27 @@
   font-family: "Lucida Console", Courier, monospace;
 }
 
-
+/* Set body color */
 body {
   background-color: rgb(39, 39, 39);
 }
 
+/* Sets background values and image */
 #map {
   background-image: url("../Images/bg1.gif");
   height: 600px;
   width: 1050px; 
 }
 
-
+/* Player css values */
 #player {
   position: absolute;
   left: 100px;
-  /*top: 240px;*/
   width: 94px;
   height: 120px
 }
 
-
+/* Form for username submission */
 #nameEnter {
   margin-left: 25%;
   margin-right:25%;
@@ -82,6 +86,7 @@ body {
   margin-bottom:15%;
 }
 
+/* Text field in the form */
 input[type=text] {
   width: 100%;
   padding: 12px 20px;
@@ -89,15 +94,15 @@ input[type=text] {
   box-sizing: border-box;
 }
 
-#submit {
-  margin-left: 40%;
-}
 
+/* Form text value */
 #fname1 {
   margin-left: 17%;
 }
 
+/* Submit button in the form */
 #submit {
+  margin-left: 40%;
   background-color: #6d6ac4;
   border: none;
   color: white;
@@ -108,18 +113,18 @@ input[type=text] {
 
 /* The Modal (background) */
 .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 250px; /* Location of the box */
+  display: none; 
+  position: fixed; 
+  z-index: 1;
+  padding-top: 250px;
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
+  width: 100%; 
+  height: 100%;
   transition: 200ms ease-in-out;
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  overflow: auto; 
+  background-color: rgb(0,0,0); 
+  background-color: rgba(0,0,0,0.4); 
 }
 
 /* Modal Content */
@@ -148,6 +153,7 @@ input[type=text] {
   cursor: pointer;
 }
 
+/* Leaderboard names box */
 #LBbox1 {
   color: white;
   padding: 10px 20px;
@@ -162,6 +168,7 @@ input[type=text] {
   font-family: "Lucida Console", Courier, monospace;
 }
 
+/* Leaderboard scores box */
 #LBbox2 {
   color: white;
   padding: 10px 20px;
@@ -175,6 +182,7 @@ input[type=text] {
   font-family: "Lucida Console", Courier, monospace;
 }
 
+/* Scores field */
 #score {
   text-align: center;
   position: absolute;
@@ -189,6 +197,7 @@ input[type=text] {
   font-family: "Lucida Console", Courier, monospace;
 }
 
+/* Play button within the game container */
 #mainPlay {
   background-color: #161616;
   border-radius: 5px;
@@ -205,6 +214,7 @@ input[type=text] {
   font-family: "Lucida Console", Courier, monospace;
 }
 
+/* Song show text value */
 #song{
   font-size: 20px;
   color: rgb(255, 255, 255);
@@ -214,6 +224,7 @@ input[type=text] {
   font-family: "Lucida Console", Courier, monospace;
 }
 
+/* Death Message values */
 #deathMessage{
   font-size: 40px;
   color: white;

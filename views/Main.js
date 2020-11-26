@@ -4,13 +4,12 @@ console.log("Program has started")
 // Global values
 let spawnStop;
 let gameOver = false;
-let gameRun = false
 let restart = false;
 let score = 0;
 var player;
 
                 
-
+//socket
 const socket = io()
 
 // Class that spawns the projectiles
@@ -49,14 +48,6 @@ projSpawner.prototype.start = function() {
     }
 }
 
-/*
-function spawners(){
-    clearInterval
-    let check = (randomize(-100, 1100));
-    if(score < 200) 
-        projectile(check, 7);
-    
-}*/
 //projectile is a child function/class of projSpawner
 function projectile(xPos, velo){
     //Projectile speed and position accumulator
@@ -114,7 +105,7 @@ function randomize(min, max) {
 }
 
 
-
+// Moves player in correct direction
 function keyDownHandler(e) {
     if ((e.keyCode == 39) || (e.keyCode == 68)) {
         player.move(1);
@@ -124,6 +115,7 @@ function keyDownHandler(e) {
     }
 }
 
+// Checks if player is 
 function isHit(defender, offender) {
     if (cross(defender, offender)) {
         console.log("Player got hit");
@@ -137,6 +129,7 @@ function isHit(defender, offender) {
     }
 }
 
+// Checks if two elements overlap
 function cross(element1, element2) {
     let left1 = element1.offset().left - 200;
     let top1 = element1.offset().top-119;
@@ -163,6 +156,7 @@ function cross(element1, element2) {
 ////////////////////////////////////
 import Player from "./Classes/Player.js"
 
+//popup modal to enter username
 var modal;
 var player = new Player()
 let projSpawn = new projSpawner();
@@ -181,6 +175,16 @@ var songs = [
         "location" : "../Audio/Sonic_Blaster.mp3",
         "name" : "Sonic Blaster",
         "artist" : "F-777"
+    },
+    {
+        "location" : "../Audio/Narc.mp3",
+        "name" : "NARC",
+        "artist" : "Mega Drive"
+    },
+    {
+        "location" : "../Audio/Future_Club.mp3",
+        "name" : "Future Club",
+        "artist" : "Pertubator"
     },
     {
         "location" : "../Audio/Diabolic.mp3",
@@ -203,27 +207,35 @@ var songs = [
         "artist" : "Carpenter Brut"
     }
 ];
+// To store the current song's info
 var currentSong;
 var currentSongInfo;
 
+// On server connection
 socket.on('connect', () => {
     gameLoop()
+
+    // Game death checking loop
     setInterval(() => {
         if(gameOver) {
+            //Give score to server
             socket.emit('gameOver', score);
-            gameRun = false
+
             let deathSound = new Audio("../Audio/soundDeath.wav")
             deathSound.play()
-            document.getElementById('map').style.backgroundImage="url(../Images/bg1.gif)"
-            $("#deathMessage").append("You died.")
             $("#song").empty()
             currentSong.pause()
             currentSong.currentTime = 0;
+
+            document.getElementById('map').style.backgroundImage="url(../Images/bg1.gif)"
+            $("#deathMessage").append("You died.")
+            
             gameOver = false
             gameLoop()
         }
     }, 20);
 
+    // Loop to check if close button is clicked
     setInterval(() => {
         if(restart) {
             restart = false
@@ -232,17 +244,20 @@ socket.on('connect', () => {
         }
     }, 20);
 
+    // Loop to communicate scores
     setInterval(() => {
         socket.emit('askScore',score)
         socket.on('getScore',function(scores){
             leaderboard(scores)
         })
-    }, 4000);
+    }, 1000);
 })
 
+//Make leaderboard empty
 $("#LBbox").empty()
 
 function gameLoop() {
+    //Set up modal box and button elements
     $("#mainPlay").show()
     var span = document.getElementsByClassName("close")[0];
     $("#nameEnter")[0].reset();
@@ -250,7 +265,6 @@ function gameLoop() {
         modal.show()
         $("#mainPlay").hide()
     })
-    
 
     $("#play").click(function(){
         location.reload()
@@ -270,7 +284,7 @@ function gameLoop() {
     let exit = true
 
 
-
+    // On submit event
     $("#nameEnter").submit((event) => {
         if(exit) {
             let playerName = $("#fname").val()
@@ -282,10 +296,13 @@ function gameLoop() {
             }
             event.preventDefault();
 
+            // Runs the main game code
             if(!restart) {
+                // Change the bg and remove existing messages
                 document.getElementById('map').style.backgroundImage="url(../Images/bg2.gif)"
                 $("#deathMessage").empty()
-                gameRun = true
+
+                // Randomly pick and play a song
                 let val = randomize(-1,songs.length)
                 currentSong = new Audio((songs[val])["location"])
                 currentSongInfo = songs[val]
@@ -293,6 +310,8 @@ function gameLoop() {
                     currentSong.currentTime = 8
                 currentSong.volume = 0.09
                 currentSong.play()
+
+                // Shows the current playing song
                 $("#song").hide()
                 $("#song").empty()
                 $("#song").append("Now playing: "+currentSongInfo["name"]+" by "+currentSongInfo["artist"])
@@ -303,6 +322,7 @@ function gameLoop() {
                     },3000)
                 },3000)
                 
+                // Update score element
                 $("#score").empty()
                 $("#score").append("Score: ")
                 socket.emit('gameStart', playerName)
@@ -319,7 +339,9 @@ function gameLoop() {
 
 }
 
+// Function to update leaderboard while being given list of player scores
 function leaderboard(scoreList) {
+    // Sort the scores list based on scores in descending order
     let cutoff = 6
     scoreList.sort(function(a,b) {
         if (a["Score"] > b["Score"]) {
@@ -331,40 +353,28 @@ function leaderboard(scoreList) {
           return 0;
     })
 
+    // Formatting the leaderboard element
     $("#LBbox1").empty()
     $("#LBbox2").empty()
     $("#LBbox1").append(`Leaderboard`)
-    var linebreak1 = document.createElement("br");
-    var linebreak2 = document.createElement("br");
-    $("#LBbox1").append(linebreak1)
-    $("#LBbox2").append(linebreak2)
-    linebreak1 = document.createElement("br");
-    linebreak2 = document.createElement("br");
-    $("#LBbox1").append(linebreak1)
-    $("#LBbox2").append(linebreak2)
+
+    insertBreak()
+    insertBreak()
     $("#LBbox1").append(`Name`)
     $("#LBbox2").append(`Score`)
-    linebreak1 = document.createElement("br");
-    linebreak2 = document.createElement("br");
-    $("#LBbox1").append(linebreak1)
-    $("#LBbox2").append(linebreak2)
+    insertBreak()
 
+    //Aappend scores
     for(let i = 0; i < cutoff; ++i) {
         let spaceRequired = 15
-        var linebreak1 = document.createElement("br");
-        var linebreak2 = document.createElement("br");
-        $("#LBbox1").append(linebreak1)
-        $("#LBbox2").append(linebreak2)
-        linebreak1 = document.createElement("br");
-        linebreak2 = document.createElement("br");
-        $("#LBbox1").append(linebreak1)
-        $("#LBbox2").append(linebreak2)
-        
+        insertBreak()
+        insertBreak()
         $("#LBbox1").append((scoreList[i])["Name"]) 
         $("#LBbox2").append((scoreList[i])["Score"])
     }
 }
 
+// Returns true if the entered username is alright to use
 function checkName(name) {
     let flag = true
     var regNum = new RegExp('^[0-9]+$');
@@ -384,6 +394,14 @@ function checkName(name) {
         flag = false
 
     return flag
+}
+
+// Function to format the leaderboard
+function insertBreak() {
+    var linebreak1 = document.createElement("br");
+    var linebreak2 = document.createElement("br");
+    $("#LBbox1").append(linebreak1)
+    $("#LBbox2").append(linebreak2)
 }
 
 /////////////////////////////////////
