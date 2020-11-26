@@ -45,6 +45,7 @@ export default class Player {
         this.htmlElement.style.display = "block";
     }
 
+    // Makes the player not go over the container bounds
     fitBounds() {
         let parent = this.htmlElement.parentElement;
         let iw = this.htmlElement.offsetWidth;
@@ -55,6 +56,7 @@ export default class Player {
             this.x = w - iw;
     }
 
+    // Remove the player
     kill() {
         this.htmlElement.remove()
     }
