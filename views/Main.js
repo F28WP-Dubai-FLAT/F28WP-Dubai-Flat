@@ -4,14 +4,18 @@ console.log("Program has started")
 // Global values
 let spawnStop;
 let gameOver = false;
+let gameRun = false
+let restart = false;
 let score = 0;
 var player;
+
+                
 
 const socket = io()
 
 // Class that spawns the projectiles
 function projSpawner() {
-    this.timer = 400;
+    this.timer = 500;
 }
 
 // function to start the projectile spawning. ****Recommened that this function is called in init****
@@ -23,22 +27,22 @@ projSpawner.prototype.start = function() {
     function spawners(){
         let check = (randomize(-10, 1010));
         if(score < 200)
-            projectile(check,7);
+            projectile(check,5);
         else if((score >= 200) && (score < 800)) {
+            timer = 450;
+            projectile(check, 6)
+        }
+        else if((score >= 800) && (score < 1600)) {
+            timer = 400;
+            projectile(check, 7)
+        }
+        else if((score >= 1600) && (score < 2400)){
             timer = 350;
             projectile(check, 8)
         }
-        else if((score >= 800) && (score < 1600)) {
-            timer = 300;
-            projectile(check, 9)
-        }
-        else if((score >= 1600) && (score < 2400)){
-            timer = 250;
-            projectile(check, 10)
-        }
         else if(score > 2400) {
-            timer = 200;
-            projectile(check, 12)
+            timer = 300;
+            projectile(check, 11)
         }
         if(!spawnStop) 
             setTimeout(spawners, timer)
@@ -89,6 +93,8 @@ function projectile(xPos, velo){
         
         if(current > 550) {
             score += 10
+            $("#score").empty()
+            $("#score").append("Score: "+score)
             clearInterval(intervals);
             projectile.remove();
         }
@@ -158,16 +164,70 @@ function cross(element1, element2) {
 import Player from "./Classes/Player.js"
 
 var modal;
-
 var player = new Player()
 let projSpawn = new projSpawner();
+var songs = [
+    {
+        "location" : "../Audio/The_Gun.mp3",
+        "name" : "The Gun",
+        "artist" : "Lorn"
+    },
+    {
+        "location" : "../Audio/66Mhz.mp3",
+        "name" : "66 Mhz",
+        "artist" : "Waveshaper"
+    },
+    {
+        "location" : "../Audio/Sonic_Blaster.mp3",
+        "name" : "Sonic Blaster",
+        "artist" : "F-777"
+    },
+    {
+        "location" : "../Audio/Diabolic.mp3",
+        "name" : "Diabolic",
+        "artist" : "Dance With The Dead"
+    },
+    {
+        "location" : "../Audio/Get_Out.mp3",
+        "name" : "Get Out",
+        "artist" : "Dance With The Dead"
+    },
+    {
+        "location" : "../Audio/Roller_Mobster.mp3",
+        "name" : "Roller Mobster",
+        "artist" : "Carpenter Brut"
+    },
+    {
+        "location" : "../Audio/Turbo_Killer.mp3",
+        "name" : "Turbo Killer",
+        "artist" : "Carpenter Brut"
+    }
+];
+var currentSong;
+var currentSongInfo;
 
 socket.on('connect', () => {
     gameLoop()
     setInterval(() => {
         if(gameOver) {
             socket.emit('gameOver', score);
+            gameRun = false
+            let deathSound = new Audio("../Audio/soundDeath.wav")
+            deathSound.play()
+            document.getElementById('map').style.backgroundImage="url(../Images/bg1.gif)"
+            $("#deathMessage").append("You died.")
+            $("#song").empty()
+            currentSong.pause()
+            currentSong.currentTime = 0;
             gameOver = false
+            gameLoop()
+        }
+    }, 20);
+
+    setInterval(() => {
+        if(restart) {
+            restart = false
+            modal.hide()
             gameLoop()
         }
     }, 20);
@@ -175,45 +235,155 @@ socket.on('connect', () => {
     setInterval(() => {
         socket.emit('askScore',score)
         socket.on('getScore',function(scores){
+            leaderboard(scores)
         })
     }, 4000);
 })
 
-$("#LBbox").append("Huther")
-linebreak = document.createElement("br");
-$("#LBbox").append(" \n Huthers")
+$("#LBbox").empty()
 
 function gameLoop() {
+    $("#mainPlay").show()
+    var span = document.getElementsByClassName("close")[0];
     $("#nameEnter")[0].reset();
-    modal= $("#myModal")
+    $("#mainPlay").click(function(){
+        modal.show()
+        $("#mainPlay").hide()
+    })
     
-    modal.show();
+
+    $("#play").click(function(){
+        location.reload()
+    })
+
+    $("#about").click(function(){
+        document.location.href = "../About.html"
+    })
+
+    modal= $("#myModal")
+    span.onclick = function() {
+        modal.hide();
+        $("#mainPlay").show()
+    }
+
     score = 0;
     let exit = true
-    let userID;
+
+
 
     $("#nameEnter").submit((event) => {
         if(exit) {
             let playerName = $("#fname").val()
+            if(!checkName(playerName)) {
+                event.preventDefault();
+                alert("Usernames must be lesser than 12 characters and should not contain special characters")
+                exit = false
+                restart = true
+            }
             event.preventDefault();
 
-            socket.emit('gameStart', playerName)
-            modal.hide();
-            
-            projSpawn.start()
-            
-            player.spawn();
-            document.addEventListener("keydown", keyDownHandler, false);
-            exit = false
+            if(!restart) {
+                document.getElementById('map').style.backgroundImage="url(../Images/bg2.gif)"
+                $("#deathMessage").empty()
+                gameRun = true
+                let val = randomize(-1,songs.length)
+                currentSong = new Audio((songs[val])["location"])
+                currentSongInfo = songs[val]
+                if(val==1)    
+                    currentSong.currentTime = 8
+                currentSong.volume = 0.09
+                currentSong.play()
+                $("#song").hide()
+                $("#song").empty()
+                $("#song").append("Now playing: "+currentSongInfo["name"]+" by "+currentSongInfo["artist"])
+                setTimeout(() => {
+                    $("#song").fadeIn(3000)
+                    setTimeout(() => {
+                        $("#song").fadeOut(3000)
+                    },3000)
+                },3000)
+                
+                $("#score").empty()
+                $("#score").append("Score: ")
+                socket.emit('gameStart', playerName)
+                modal.hide();
+                
+                projSpawn.start()
+                
+                player.spawn();
+                document.addEventListener("keydown", keyDownHandler, false);
+                exit = false
+            }
         }
     })
 
 }
 
-//let gameEnd = setInterval(() => {
-    /*if(gameOver) {
-        $("#nameEnter")[0].reset();
-        modal.show();
-    }*/
-//}, 10)
+function leaderboard(scoreList) {
+    let cutoff = 6
+    scoreList.sort(function(a,b) {
+        if (a["Score"] > b["Score"]) {
+            return -1;
+          }
+          if (a["Score"] < b["Score"]) {
+            return 1;
+          }
+          return 0;
+    })
+
+    $("#LBbox1").empty()
+    $("#LBbox2").empty()
+    $("#LBbox1").append(`Leaderboard`)
+    var linebreak1 = document.createElement("br");
+    var linebreak2 = document.createElement("br");
+    $("#LBbox1").append(linebreak1)
+    $("#LBbox2").append(linebreak2)
+    linebreak1 = document.createElement("br");
+    linebreak2 = document.createElement("br");
+    $("#LBbox1").append(linebreak1)
+    $("#LBbox2").append(linebreak2)
+    $("#LBbox1").append(`Name`)
+    $("#LBbox2").append(`Score`)
+    linebreak1 = document.createElement("br");
+    linebreak2 = document.createElement("br");
+    $("#LBbox1").append(linebreak1)
+    $("#LBbox2").append(linebreak2)
+
+    for(let i = 0; i < cutoff; ++i) {
+        let spaceRequired = 15
+        var linebreak1 = document.createElement("br");
+        var linebreak2 = document.createElement("br");
+        $("#LBbox1").append(linebreak1)
+        $("#LBbox2").append(linebreak2)
+        linebreak1 = document.createElement("br");
+        linebreak2 = document.createElement("br");
+        $("#LBbox1").append(linebreak1)
+        $("#LBbox2").append(linebreak2)
+        
+        $("#LBbox1").append((scoreList[i])["Name"]) 
+        $("#LBbox2").append((scoreList[i])["Score"])
+    }
+}
+
+function checkName(name) {
+    let flag = true
+    var regNum = new RegExp('^[0-9]+$');
+    var letters = new RegExp('^[A-Za-z]+$');
+    for (let i = 0; i < name.length; i++) {
+        if(!(name.charAt(i).match(regNum) || name.charAt(i).match(letters))) {
+            flag = false
+            break;
+        }
+        if((name.length > 12 ))  {
+            flag = false
+            break;
+        }
+    }
+
+    if(name.length == 0) 
+        flag = false
+
+    return flag
+}
+
 /////////////////////////////////////
